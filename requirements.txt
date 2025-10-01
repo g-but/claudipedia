@@ -1,0 +1,19 @@
+# Core
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Database
+neo4j==5.14.0
+
+# AI
+anthropic==0.26.0
+
+# Math & Science (scipy removed for now - can be added back when needed)
+sympy==1.12
+numpy==1.26.2
+
+# Utilities
+python-dotenv==1.0.0
+httpx==0.25.2
+pytest==7.4.3
