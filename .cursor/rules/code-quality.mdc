@@ -1,42 +1,79 @@
 ---
-description: "Core code quality rules - DRY, SSOT, minimal changes"
+description: "Claudipedia code quality - decoupled full-stack patterns"
 alwaysApply: true
 ---
 
 # Code Quality Rules
 
+## Architecture
+
+This is a **decoupled full-stack** application:
+- `web/` - Next.js 15 frontend (port 3001)
+- `backend/` - FastAPI Python backend (port 8000)
+- Neo4j graph database
+
 ## Core Principles
 
-### DRY (Don't Repeat Yourself)
-- Extract repeated logic into reusable functions
-- Check for existing utilities before creating new ones
-- Use constants for repeated values
+### 1. DRY - Don't Repeat Yourself
+- Share type definitions conceptually (TypeScript ↔ Pydantic)
+- Centralize API client in `web/lib/api/`
+- Centralize Neo4j queries in `backend/services/`
 
-### SSOT (Single Source of Truth)
-- Data should be defined in one place only
-- Configuration lives in dedicated files
-- Types are defined once and imported
+### 2. SSOT - Single Source of Truth
+| Data | Location |
+|------|----------|
+| API Types (TS) | `web/lib/types.ts` |
+| API Models (Py) | `backend/models/` |
+| Graph Schema | `src/core/schema.py` |
+| Config | `.env` files (not committed) |
 
-### Minimal Changes
-- Only modify what's necessary for the task
-- Don't refactor unrelated code
-- Don't add features not requested
+### 3. Offline Mode
+Frontend MUST support offline mode with mock data:
+```typescript
+const useMock = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+```
 
-## Before Making Changes
+## TypeScript Standards
 
-1. Search for existing similar functionality
-2. Check if a utility already exists
-3. Verify you're not duplicating code
+```typescript
+// Explicit types, named exports
+export interface Claim {
+  id: string;
+  content: string;
+  confidence: number;
+}
 
-## Code Patterns
+// Async/await, proper error handling
+export async function fetchClaims(): Promise<Claim[]> {
+  try {
+    const res = await fetch(`${API_URL}/claims`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    return res.json();
+  } catch (error) {
+    console.error('fetchClaims failed:', error);
+    return [];
+  }
+}
+```
 
-- Use existing patterns found in the codebase
-- Follow the file's existing style
-- Don't introduce new patterns without reason
+## Python Standards
 
-## What NOT to Do
+```python
+# Pydantic models with validation
+from pydantic import BaseModel, Field
 
-- Don't add comments explaining obvious code
-- Don't create abstractions for one-time use
-- Don't add "nice to have" features
-- Don't refactor working code unnecessarily
+class ClaimCreate(BaseModel):
+    content: str = Field(..., min_length=1)
+    confidence: float = Field(..., ge=0, le=1)
+
+# Type hints, async functions
+async def create_claim(data: ClaimCreate) -> Claim:
+    ...
+```
+
+## Don't
+
+- Mix frontend/backend code
+- Skip offline fallbacks
+- Hardcode URLs or credentials
+- Add console.log/print in production code

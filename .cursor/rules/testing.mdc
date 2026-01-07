@@ -1,26 +1,73 @@
 ---
-description: "Testing guidelines - run tests, verify changes"
+description: "Testing guidelines for Claudipedia"
 alwaysApply: false
-globs: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
+globs: ["**/*.test.*", "**/*.spec.*", "**/tests/**", "**/*_test.py"]
 ---
 
 # Testing Rules
 
-## Before Committing
+## Test Commands
 
-1. Run the test suite
-2. Verify all tests pass
-3. Add tests for new functionality
+```bash
+# Backend (Python)
+cd backend
+source ../venv/bin/activate
+pytest                    # Run all tests
+pytest -v                 # Verbose
+pytest tests/test_api.py  # Specific file
+
+# Frontend (TypeScript)
+cd web
+npm run build             # Build check (catches type errors)
+
+# API Health
+curl http://localhost:8000/health
+curl http://localhost:8000/docs  # Swagger UI
+```
+
+## Backend Testing (Pytest)
+
+```python
+# tests/test_claims.py
+import pytest
+from httpx import AsyncClient
+from main import app
+
+@pytest.mark.asyncio
+async def test_create_claim():
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post("/claims", json={
+            "content": "Test claim",
+            "confidence": 0.8
+        })
+        assert response.status_code == 201
+        assert response.json()["content"] == "Test claim"
+```
+
+## Frontend Testing (Playwright)
+
+```typescript
+// tests/research.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('create research profile', async ({ page }) => {
+  await page.goto('/research');
+  await page.click('button:has-text("New Profile")');
+  await page.fill('input[name="name"]', 'Test Profile');
+  await page.click('button:has-text("Create")');
+  await expect(page.locator('text=Test Profile')).toBeVisible();
+});
+```
 
 ## Test Quality
 
-- Test behavior, not implementation
-- Keep tests focused and readable
+- Test API contracts, not implementation
+- Mock external services (Neo4j, AI)
+- Test offline mode fallbacks
 - Use descriptive test names
 
-## Commands
+## Before Committing
 
-```bash
-npm test           # Run all tests
-npm run test:watch # Watch mode
-```
+1. `cd backend && pytest` - All backend tests pass
+2. `cd web && npm run build` - Frontend builds without errors
+3. API types match between frontend/backend
