@@ -1,0 +1,26 @@
+---
+description: "Testing guidelines - run tests, verify changes"
+alwaysApply: false
+globs: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
+---
+
+# Testing Rules
+
+## Before Committing
+
+1. Run the test suite
+2. Verify all tests pass
+3. Add tests for new functionality
+
+## Test Quality
+
+- Test behavior, not implementation
+- Keep tests focused and readable
+- Use descriptive test names
+
+## Commands
+
+```bash
+npm test           # Run all tests
+npm run test:watch # Watch mode
+```

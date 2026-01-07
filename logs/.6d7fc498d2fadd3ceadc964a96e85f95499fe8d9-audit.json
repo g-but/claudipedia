@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/g/dev/claudipedia/logs/.6d7fc498d2fadd3ceadc964a96e85f95499fe8d9-audit.json",
+    "files": [
+        {
+            "date": 1759350997071,
+            "name": "/home/g/dev/claudipedia/logs/mcp-puppeteer-2025-10-01.log",
+            "hash": "a0f0cf133f17f0326f388ef4bebcc85be6480822ea03f338a8f6ac79fae830eb"
+        }
+    ],
+    "hashType": "sha256"
+}

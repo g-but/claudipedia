@@ -1,0 +1,186 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e7]:
+            - img [ref=e8]
+          - link "📚 Claudipedia" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11] [cursor=pointer]: 📚
+            - heading "Claudipedia" [level=1] [ref=e12] [cursor=pointer]
+        - generic [ref=e15]:
+          - textbox "Search articles..." [ref=e16]
+          - generic:
+            - img
+          - button "Search" [ref=e17]
+        - generic [ref=e18]:
+          - link "Sign In" [ref=e19] [cursor=pointer]:
+            - /url: /auth/signin
+          - link "Sign Up" [ref=e20] [cursor=pointer]:
+            - /url: /auth/signup
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e24]:
+          - link "🏠 Home" [ref=e25] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e26]:
+            - heading "Physics Domains" [level=3] [ref=e27]
+            - generic [ref=e28]:
+              - link "Classical Mechanics" [ref=e29] [cursor=pointer]:
+                - /url: /domain/classical-mechanics
+              - link "Quantum Mechanics" [ref=e30] [cursor=pointer]:
+                - /url: /domain/quantum-mechanics
+              - link "Relativity" [ref=e31] [cursor=pointer]:
+                - /url: /domain/relativity
+              - link "Thermodynamics" [ref=e32] [cursor=pointer]:
+                - /url: /domain/thermodynamics
+              - link "Electromagnetism" [ref=e33] [cursor=pointer]:
+                - /url: /domain/electromagnetism
+              - link "Statistical Mechanics" [ref=e34] [cursor=pointer]:
+                - /url: /domain/statistical-mechanics
+              - link "Nuclear Physics" [ref=e35] [cursor=pointer]:
+                - /url: /domain/nuclear-physics
+              - link "Particle Physics" [ref=e36] [cursor=pointer]:
+                - /url: /domain/particle-physics
+          - generic [ref=e37]:
+            - heading "Community" [level=3] [ref=e38]
+            - generic [ref=e39]:
+              - link "Recent Changes" [ref=e40] [cursor=pointer]:
+                - /url: /recent-changes
+              - link "Discussions" [ref=e41] [cursor=pointer]:
+                - /url: /discussions
+              - link "Research Profiles" [ref=e42] [cursor=pointer]:
+                - /url: /research
+              - link "Help" [ref=e43] [cursor=pointer]:
+                - /url: /help
+      - main [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - heading "Welcome to Claudipedia" [level=1] [ref=e48]:
+              - text: Welcome to
+              - generic [ref=e49]: Claudipedia
+            - paragraph [ref=e50]: The AI-powered encyclopedia where humans and machines collaborate to build comprehensive, reliable knowledge across all domains of physics.
+            - generic [ref=e52]:
+              - textbox "Search for articles, concepts, or questions..." [ref=e53]
+              - button "Search" [ref=e54]
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - heading "Featured Articles" [level=2] [ref=e57]
+              - generic [ref=e58]:
+                - article [ref=e59]:
+                  - generic [ref=e60]:
+                    - generic [ref=e61]: Physics
+                    - generic [ref=e62]: 95% Confidence
+                  - heading "Classical Mechanics" [level=3] [ref=e63]:
+                    - link "Classical Mechanics" [ref=e64] [cursor=pointer]:
+                      - /url: /article/classical-mechanics
+                  - paragraph [ref=e65]: The branch of physics concerned with the motion of macroscopic objects under the influence of forces.
+                  - generic [ref=e66]:
+                    - generic [ref=e67]: 12 min read
+                    - generic [ref=e68]: "Modified: 2024-01-15"
+                - article [ref=e69]:
+                  - generic [ref=e70]:
+                    - generic [ref=e71]: Physics
+                    - generic [ref=e72]: 90% Confidence
+                  - heading "Quantum Mechanics" [level=3] [ref=e73]:
+                    - link "Quantum Mechanics" [ref=e74] [cursor=pointer]:
+                      - /url: /article/quantum-mechanics
+                  - paragraph [ref=e75]: A fundamental theory in physics that describes the physical properties of nature at the scale of atoms.
+                  - generic [ref=e76]:
+                    - generic [ref=e77]: 12 min read
+                    - generic [ref=e78]: "Modified: 2024-01-14"
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - heading "Recent Articles" [level=2] [ref=e81]
+                - generic [ref=e82]:
+                  - generic [ref=e83]:
+                    - generic [ref=e84]:
+                      - heading "Black Holes" [level=3] [ref=e85]:
+                        - link "Black Holes" [ref=e86] [cursor=pointer]:
+                          - /url: /article/black-holes
+                      - paragraph [ref=e87]: Astrophysics
+                    - generic [ref=e88]: 2 hours ago
+                  - generic [ref=e89]:
+                    - generic [ref=e90]:
+                      - heading "Quantum Entanglement" [level=3] [ref=e91]:
+                        - link "Quantum Entanglement" [ref=e92] [cursor=pointer]:
+                          - /url: /article/quantum-entanglement
+                      - paragraph [ref=e93]: Quantum Physics
+                    - generic [ref=e94]: 5 hours ago
+                  - generic [ref=e95]:
+                    - generic [ref=e96]:
+                      - heading "Electromagnetism" [level=3] [ref=e97]:
+                        - link "Electromagnetism" [ref=e98] [cursor=pointer]:
+                          - /url: /article/electromagnetism
+                      - paragraph [ref=e99]: Physics
+                    - generic [ref=e100]: 1 day ago
+                  - generic [ref=e101]:
+                    - generic [ref=e102]:
+                      - heading "String Theory" [level=3] [ref=e103]:
+                        - link "String Theory" [ref=e104] [cursor=pointer]:
+                          - /url: /article/string-theory
+                      - paragraph [ref=e105]: Theoretical Physics
+                    - generic [ref=e106]: 2 days ago
+                  - generic [ref=e107]:
+                    - generic [ref=e108]:
+                      - heading "Nuclear Fusion" [level=3] [ref=e109]:
+                        - link "Nuclear Fusion" [ref=e110] [cursor=pointer]:
+                          - /url: /article/nuclear-fusion
+                      - paragraph [ref=e111]: Nuclear Physics
+                    - generic [ref=e112]: 3 days ago
+              - generic [ref=e113]:
+                - heading "Physics Domains" [level=2] [ref=e114]
+                - generic [ref=e115]:
+                  - link "Classical Mechanics 45 articles" [ref=e116] [cursor=pointer]:
+                    - /url: /domain/classical-mechanics
+                    - heading "Classical Mechanics" [level=3] [ref=e118] [cursor=pointer]
+                    - paragraph [ref=e120] [cursor=pointer]: 45 articles
+                  - link "Quantum Mechanics 38 articles" [ref=e121] [cursor=pointer]:
+                    - /url: /domain/quantum-mechanics
+                    - heading "Quantum Mechanics" [level=3] [ref=e123] [cursor=pointer]
+                    - paragraph [ref=e125] [cursor=pointer]: 38 articles
+                  - link "Relativity 32 articles" [ref=e126] [cursor=pointer]:
+                    - /url: /domain/relativity
+                    - heading "Relativity" [level=3] [ref=e128] [cursor=pointer]
+                    - paragraph [ref=e130] [cursor=pointer]: 32 articles
+                  - link "Thermodynamics 28 articles" [ref=e131] [cursor=pointer]:
+                    - /url: /domain/thermodynamics
+                    - heading "Thermodynamics" [level=3] [ref=e133] [cursor=pointer]
+                    - paragraph [ref=e135] [cursor=pointer]: 28 articles
+                  - link "Electromagnetism 41 articles" [ref=e136] [cursor=pointer]:
+                    - /url: /domain/electromagnetism
+                    - heading "Electromagnetism" [level=3] [ref=e138] [cursor=pointer]
+                    - paragraph [ref=e140] [cursor=pointer]: 41 articles
+                  - link "Statistical Mechanics 24 articles" [ref=e141] [cursor=pointer]:
+                    - /url: /domain/statistical-mechanics
+                    - heading "Statistical Mechanics" [level=3] [ref=e143] [cursor=pointer]
+                    - paragraph [ref=e145] [cursor=pointer]: 24 articles
+            - generic [ref=e147]:
+              - heading "Claudipedia Statistics" [level=2] [ref=e148]
+              - generic [ref=e149]:
+                - generic [ref=e150]:
+                  - generic [ref=e151]: "127"
+                  - generic [ref=e152]: Articles
+                - generic [ref=e153]:
+                  - generic [ref=e154]: "8"
+                  - generic [ref=e155]: Physics Domains
+                - generic [ref=e156]:
+                  - generic [ref=e157]: 94%
+                  - generic [ref=e158]: Avg Confidence
+                - generic [ref=e159]:
+                  - generic [ref=e160]: "156"
+                  - generic [ref=e161]: Contributors
+            - generic [ref=e163]:
+              - heading "Help Build the Future of Knowledge" [level=2] [ref=e164]
+              - paragraph [ref=e165]: Join our community of researchers, students, and AI systems working together to create the most comprehensive and reliable knowledge base.
+              - generic [ref=e166]:
+                - button "Create Article" [ref=e167]
+                - button "Join Community" [ref=e168]
+  - button "Open Next.js Dev Tools" [ref=e174] [cursor=pointer]:
+    - img [ref=e175] [cursor=pointer]
+  - alert [ref=e178]
+```

@@ -6,7 +6,7 @@ to build reliable knowledge with transparency and quality control.
 """
 
 import asyncio
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -18,6 +18,17 @@ from pydantic import BaseModel, Field
 from enum import Enum
 import logging
 import os
+import base64
+
+# Import research models
+from models.research_models import ResearchProfile, ResearchContext, ResearchSession, ContextType, ResearchStatus
+
+# Import Neo4j database interface
+try:
+    from src.core.graph_db import KnowledgeGraph
+    NEO4J_AVAILABLE = True
+except ImportError:
+    NEO4J_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -108,9 +119,9 @@ class Article(BaseModel):
     author_id: str
     status: ArticleStatus = ArticleStatus.DRAFT
     version: int = 1
-    sections: List[ArticleSection] = []
-    sources: List[Source] = []
-    tags: List[str] = []
+    sections: List[ArticleSection] = Field(default_factory=list)
+    sources: List[Source] = Field(default_factory=list)
+    tags: List[str] = Field(default_factory=list)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     published_at: Optional[datetime] = None
@@ -126,7 +137,7 @@ class Review(BaseModel):
     status: ReviewStatus = ReviewStatus.PENDING
     score: Optional[float] = None
     feedback: Optional[str] = None
-    citations: List[str] = []
+    citations: List[str] = Field(default_factory=list)
     created_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
 
@@ -135,7 +146,7 @@ class User(BaseModel):
     email: str
     name: str
     role: str
-    expertise: List[str] = []
+    expertise: List[str] = Field(default_factory=list)
     reputation: int = 0
     contributions_count: int = 0
     verified: bool = False
@@ -145,6 +156,35 @@ class User(BaseModel):
 articles_db: Dict[str, Article] = {}
 reviews_db: Dict[str, Review] = {}
 users_db: Dict[str, User] = {}
+
+# Neo4j database instance (will be None if not available)
+graph_db: Optional[KnowledgeGraph] = None
+
+def initialize_database():
+    """Initialize database connection if Neo4j is available."""
+    global graph_db
+    if NEO4J_AVAILABLE:
+        try:
+            # Get database connection parameters from environment
+            uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+            user = os.getenv("NEO4J_USER", "neo4j")
+            password = os.getenv("NEO4J_PASSWORD", "claudipedia")
+
+            graph_db = KnowledgeGraph(uri, user, password)
+            graph_db.connect()
+            logger.info("Successfully connected to Neo4j database")
+        except Exception as e:
+            logger.error(f"Failed to connect to Neo4j: {e}")
+            logger.info("Continuing with mock data storage only")
+            graph_db = None
+    else:
+        logger.info("Neo4j not available, using mock data storage")
+
+def get_database():
+    """Get database instance (Neo4j or fallback to mock)."""
+    if graph_db and graph_db.is_connected():
+        return graph_db
+    return None
 
 # Sample data for testing
 def initialize_sample_data():
@@ -446,7 +486,8 @@ async def complete_review(
 # Claude integration
 async def create_claude_review(article_id: str):
     """Create a Claude review for an article."""
-    from .services.claude_service import claude_service, ClaudeReviewRequest
+    # Import from services using absolute import as this module is not a package
+    from services.claude_service import claude_service, ClaudeReviewRequest
 
     article = articles_db.get(article_id)
     if not article:
@@ -611,6 +652,377 @@ async def get_system_stats(current_user: User = Depends(get_current_user)):
     }
 
     return {"stats": stats}
+
+@app.post("/admin/prune-sources")
+async def prune_orphaned_sources(current_user: User = Depends(get_current_user)):
+    """Delete orphaned Source nodes not referenced by any Claim (admin only)."""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+
+    db = get_database()
+    if not db:
+        return JSONResponse(
+            status_code=200,
+            content={
+                "deleted": 0,
+                "message": "No graph database connected; nothing to prune"
+            }
+        )
+
+    try:
+        deleted = db.prune_orphaned_sources()
+        return {"deleted": deleted, "status": "ok"}
+    except Exception as e:
+        logger.error(f"Prune failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to prune sources")
+
+# Research Profile API Endpoints
+
+@app.post("/research/profiles")
+async def create_research_profile(
+    profile_data: Dict[str, Any],
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new research profile for truth-seeking."""
+    try:
+        # Validate required fields
+        required_fields = ["name", "description"]
+        for field in required_fields:
+            if field not in profile_data:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+
+        # Create profile object
+        profile = ResearchProfile(
+            user_id=current_user.id,
+            name=profile_data["name"],
+            description=profile_data["description"],
+            domains=profile_data.get("domains", []),
+            metadata=profile_data.get("metadata", {})
+        )
+
+        # Store in database if available, otherwise use mock storage
+        db = get_database()
+        if db:
+            profile_id = db.create_profile(profile)
+            logger.info(f"Created research profile in Neo4j: {profile_id}")
+        else:
+            # Mock storage fallback
+            profile_id = profile.id
+            logger.info(f"Created research profile in mock storage: {profile_id}")
+
+        return {
+            "profile_id": profile_id,
+            "status": "created",
+            "message": "Research profile created successfully"
+        }
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error creating research profile: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/research/profiles")
+async def get_user_research_profiles(current_user: User = Depends(get_current_user)):
+    """Get all research profiles for the current user."""
+    try:
+        db = get_database()
+        if db:
+            profiles = db.get_user_profiles(current_user.id)
+        else:
+            # Mock data - return empty list for now
+            profiles = []
+
+        return {"profiles": [profile.to_dict() for profile in profiles]}
+
+    except Exception as e:
+        logger.error(f"Error getting research profiles: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/research/profiles/{profile_id}")
+async def get_research_profile(
+    profile_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get a specific research profile."""
+    try:
+        db = get_database()
+        if db:
+            profile = db.get_profile(profile_id)
+            if not profile:
+                raise HTTPException(status_code=404, detail="Research profile not found")
+
+            # Check if user owns this profile
+            if profile.user_id != current_user.id and current_user.role != "admin":
+                raise HTTPException(status_code=403, detail="Not authorized to view this profile")
+        else:
+            # Mock data - return None for now
+            raise HTTPException(status_code=404, detail="Research profile not found")
+
+        return profile.to_dict()
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting research profile: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/research/profiles/{profile_id}/contexts")
+async def upload_research_context(
+    profile_id: str,
+    context_data: Dict[str, Any],
+    current_user: User = Depends(get_current_user)
+):
+    """Upload a research context to a profile."""
+    try:
+        # Validate required fields
+        required_fields = ["title", "type", "content"]
+        for field in required_fields:
+            if field not in context_data:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+
+        # Validate context type
+        try:
+            context_type = ContextType(context_data["type"])
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid context type")
+
+        # Create context object
+        context = ResearchContext(
+            title=context_data["title"],
+            type=context_type,
+            content=context_data["content"],
+            uploaded_by=current_user.id,
+            metadata=context_data.get("metadata", {})
+        )
+
+        # Store in database if available
+        db = get_database()
+        if db:
+            context_id = db.create_context(context)
+
+            # Add context to profile
+            profile = db.get_profile(profile_id)
+            if profile and profile.user_id == current_user.id:
+                if context_id not in profile.contexts:
+                    profile.contexts.append(context_id)
+                    db.create_profile(profile)
+
+            logger.info(f"Uploaded research context: {context_id} to profile: {profile_id}")
+        else:
+            # Mock storage
+            context_id = context.id
+            logger.info(f"Uploaded research context (mock): {context_id}")
+
+        return {
+            "context_id": context_id,
+            "status": "uploaded",
+            "message": "Research context uploaded successfully"
+        }
+
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error uploading research context: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/research/profiles/{profile_id}/contexts")
+async def get_profile_contexts(
+    profile_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all contexts for a research profile."""
+    try:
+        # Verify profile ownership
+        db = get_database()
+        if db:
+            profile = db.get_profile(profile_id)
+            if not profile:
+                raise HTTPException(status_code=404, detail="Research profile not found")
+
+            if profile.user_id != current_user.id and current_user.role != "admin":
+                raise HTTPException(status_code=403, detail="Not authorized to view this profile")
+
+            contexts = db.get_profile_contexts(profile_id)
+        else:
+            # Mock data
+            contexts = []
+
+        return {"contexts": [context.to_dict() for context in contexts]}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting profile contexts: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/research/contexts/{context_id}")
+async def get_research_context(
+    context_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get a specific research context."""
+    try:
+        db = get_database()
+        if db:
+            context = db.get_context(context_id)
+            if not context:
+                raise HTTPException(status_code=404, detail="Research context not found")
+
+            # Check if user can access this context (own or public)
+            if context.uploaded_by != current_user.id and current_user.role != "admin":
+                raise HTTPException(status_code=403, detail="Not authorized to view this context")
+        else:
+            raise HTTPException(status_code=404, detail="Research context not found")
+
+        return context.to_dict()
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting research context: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/research/sessions")
+async def create_research_session(
+    session_data: Dict[str, Any],
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new research session for truth-seeking."""
+    try:
+        # Validate required fields
+        required_fields = ["profile_id", "title", "query"]
+        for field in required_fields:
+            if field not in session_data:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+
+        # Verify profile ownership
+        db = get_database()
+        if db:
+            profile = db.get_profile(session_data["profile_id"])
+            if not profile:
+                raise HTTPException(status_code=404, detail="Research profile not found")
+
+            if profile.user_id != current_user.id:
+                raise HTTPException(status_code=403, detail="Not authorized to create session for this profile")
+
+        # Create session object
+        session = ResearchSession(
+            profile_id=session_data["profile_id"],
+            user_id=current_user.id,
+            title=session_data["title"],
+            query=session_data["query"],
+            relevant_contexts=session_data.get("relevant_contexts", [])
+        )
+
+        # Store in database if available
+        if db:
+            session_id = db.create_session(session)
+            logger.info(f"Created research session: {session_id}")
+        else:
+            session_id = session.id
+            logger.info(f"Created research session (mock): {session_id}")
+
+        return {
+            "session_id": session_id,
+            "status": "created",
+            "message": "Research session created successfully"
+        }
+
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error creating research session: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/research/sessions/{session_id}")
+async def get_research_session(
+    session_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get a specific research session."""
+    try:
+        db = get_database()
+        if db:
+            session = db.get_session(session_id)
+            if not session:
+                raise HTTPException(status_code=404, detail="Research session not found")
+
+            # Check if user owns this session
+            if session.user_id != current_user.id and current_user.role != "admin":
+                raise HTTPException(status_code=403, detail="Not authorized to view this session")
+        else:
+            raise HTTPException(status_code=404, detail="Research session not found")
+
+        return session.to_dict()
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting research session: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/research/sessions/{session_id}/findings")
+async def update_session_findings(
+    session_id: str,
+    findings_data: Dict[str, Any],
+    current_user: User = Depends(get_current_user)
+):
+    """Update findings for a research session."""
+    try:
+        # Validate required fields
+        if "findings" not in findings_data:
+            raise HTTPException(status_code=400, detail="Missing findings field")
+
+        db = get_database()
+        if db:
+            session = db.get_session(session_id)
+            if not session:
+                raise HTTPException(status_code=404, detail="Research session not found")
+
+            # Check if user owns this session
+            if session.user_id != current_user.id:
+                raise HTTPException(status_code=403, detail="Not authorized to update this session")
+
+            # Update session findings
+            session.findings = findings_data["findings"]
+            session.confidence = findings_data.get("confidence", session.confidence)
+
+            # Mark as completed if findings provided
+            if session.findings.strip():
+                session.status = ResearchStatus.COMPLETED
+                session.completed_at = datetime.now()
+
+            # Save updated session
+            db.create_session(session)
+
+        return {"status": "updated", "message": "Session findings updated successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating session findings: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+# Startup and shutdown events
+@app.on_event("startup")
+async def startup_event():
+    """Initialize application on startup."""
+    initialize_database()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on application shutdown."""
+    global graph_db
+    if graph_db and graph_db.is_connected():
+        graph_db.disconnect()
 
 # Error handlers
 @app.exception_handler(HTTPException)

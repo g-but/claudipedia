@@ -227,6 +227,9 @@ export default function WikipediaLayout({ children, currentArticle }: WikipediaL
                   <Link href="/discussions" className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
                     Discussions
                   </Link>
+                  <Link href="/research" className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                    Research Profiles
+                  </Link>
                   <Link href="/help" className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
                     Help
                   </Link>

@@ -1,15 +1,17 @@
-# Core
+# Dev/Extras (not production backend). Align versions with backend where overlapping.
+
+# Core (aligned with backend/requirements.txt)
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-pydantic==2.5.0
+pydantic==2.8.2
 
-# Database
+# Database (optional for local tooling)
 neo4j==5.14.0
 
-# AI
+# AI (optional)
 anthropic==0.26.0
 
-# Math & Science (scipy removed for now - can be added back when needed)
+# Math & Science (optional)
 sympy==1.12
 numpy==1.26.2
 

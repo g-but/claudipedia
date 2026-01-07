@@ -25,17 +25,13 @@ services:
       - NEO4J_dbms_logs_debug_level=INFO
 
       # Security settings for development
-      - NEO4J_dbms_security_authentication_enabled=true
-      - NEO4J_dbms_security_authorization_enabled=true
+      - NEO4J_dbms_security_auth__enabled=true
 
     volumes:
       # Persistent data storage
       - neo4j_data:/data
       - neo4j_logs:/logs
       - neo4j_plugins:/plugins
-
-      # Configuration override (removed read-only to fix startup issues)
-      - ./docker/neo4j.conf:/var/lib/neo4j/conf/neo4j.conf
 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474"]
@@ -75,10 +71,7 @@ services:
 
     volumes:
       # Mount source code for development
-      - ./backend:/app:ro
-
-      # Mount logs directory
-      - ./logs:/app/logs
+      - ./backend:/app
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -90,32 +83,14 @@ services:
     networks:
       - claudipedia-network
 
-  # Frontend (Next.js)
-  frontend:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    container_name: claudipedia-frontend
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      # Backend API URL
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
-
-      # Next.js configuration
-      - NODE_ENV=${NODE_ENV:-development}
-
-    depends_on:
-      - backend
-
-    volumes:
-      # Mount source code for development
-      - ./web:/app:ro
-      - /app/node_modules
-
-    networks:
-      - claudipedia-network
+  # Frontend deployment note:
+  # The Next.js frontend is now deployed separately to Vercel or similar platform
+  # and communicates with the backend API via HTTP requests.
+  #
+  # For local development, run the frontend separately:
+  # cd web && npm run dev
+  #
+  # The frontend will automatically fall back to mock data if the backend is unavailable.
 
   # Redis for caching (optional, for future features)
   redis:

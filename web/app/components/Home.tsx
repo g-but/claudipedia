@@ -13,6 +13,16 @@ interface FeaturedArticle {
   readTime: string
 }
 
+interface SearchResult {
+  id: string
+  title: string
+  summary: string
+  domain: string
+  lastModified: string
+  confidence: number
+  readTime: string
+}
+
 export default function Home() {
   const [featuredArticles, setFeaturedArticles] = useState<FeaturedArticle[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,7 +33,7 @@ export default function Home() {
         const response = await fetch('/api/search?q=physics&limit=4')
         const data = await response.json()
         if (data.results) {
-          setFeaturedArticles(data.results.map((article: any) => ({
+          setFeaturedArticles(data.results.map((article: SearchResult) => ({
             id: article.id,
             title: article.title,
             summary: article.summary,

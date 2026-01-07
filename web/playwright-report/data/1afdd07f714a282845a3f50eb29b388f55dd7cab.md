@@ -1,0 +1,158 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - button [ref=e7]:
+          - img [ref=e8]
+        - link "📚 Claudipedia" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e11] [cursor=pointer]: 📚
+          - heading "Claudipedia" [level=1] [ref=e12] [cursor=pointer]
+      - generic [ref=e15]:
+        - textbox "Search articles..." [ref=e16]
+        - generic:
+          - img
+        - button "Search" [ref=e17]
+      - generic [ref=e18]:
+        - link "Sign In" [ref=e19] [cursor=pointer]:
+          - /url: /auth/signin
+        - link "Sign Up" [ref=e20] [cursor=pointer]:
+          - /url: /auth/signup
+  - generic [ref=e21]:
+    - complementary [ref=e22]:
+      - navigation [ref=e24]:
+        - link "🏠 Home" [ref=e25] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e26]:
+          - heading "Physics Domains" [level=3] [ref=e27]
+          - generic [ref=e28]:
+            - link "Classical Mechanics" [ref=e29] [cursor=pointer]:
+              - /url: /domain/classical-mechanics
+            - link "Quantum Mechanics" [ref=e30] [cursor=pointer]:
+              - /url: /domain/quantum-mechanics
+            - link "Relativity" [ref=e31] [cursor=pointer]:
+              - /url: /domain/relativity
+            - link "Thermodynamics" [ref=e32] [cursor=pointer]:
+              - /url: /domain/thermodynamics
+            - link "Electromagnetism" [ref=e33] [cursor=pointer]:
+              - /url: /domain/electromagnetism
+            - link "Statistical Mechanics" [ref=e34] [cursor=pointer]:
+              - /url: /domain/statistical-mechanics
+            - link "Nuclear Physics" [ref=e35] [cursor=pointer]:
+              - /url: /domain/nuclear-physics
+            - link "Particle Physics" [ref=e36] [cursor=pointer]:
+              - /url: /domain/particle-physics
+        - generic [ref=e37]:
+          - heading "Community" [level=3] [ref=e38]
+          - generic [ref=e39]:
+            - link "Recent Changes" [ref=e40] [cursor=pointer]:
+              - /url: /recent-changes
+            - link "Discussions" [ref=e41] [cursor=pointer]:
+              - /url: /discussions
+            - link "Research Profiles" [ref=e42] [cursor=pointer]:
+              - /url: /research
+            - link "Help" [ref=e43] [cursor=pointer]:
+              - /url: /help
+    - main [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e47]:
+          - heading "Welcome to Claudipedia" [level=1] [ref=e48]:
+            - text: Welcome to
+            - generic [ref=e49]: Claudipedia
+          - paragraph [ref=e50]: The AI-powered encyclopedia where humans and machines collaborate to build comprehensive, reliable knowledge across all domains of physics.
+          - generic [ref=e52]:
+            - textbox "Search for articles, concepts, or questions..." [ref=e53]
+            - button "Search" [ref=e54]
+        - generic [ref=e55]:
+          - heading "Featured Articles" [level=2] [ref=e57]
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - heading "Recent Articles" [level=2] [ref=e105]
+              - generic [ref=e106]:
+                - generic [ref=e107]:
+                  - generic [ref=e108]:
+                    - heading "Black Holes" [level=3] [ref=e109]:
+                      - link "Black Holes" [ref=e110] [cursor=pointer]:
+                        - /url: /article/black-holes
+                    - paragraph [ref=e111]: Astrophysics
+                  - generic [ref=e112]: 2 hours ago
+                - generic [ref=e113]:
+                  - generic [ref=e114]:
+                    - heading "Quantum Entanglement" [level=3] [ref=e115]:
+                      - link "Quantum Entanglement" [ref=e116] [cursor=pointer]:
+                        - /url: /article/quantum-entanglement
+                    - paragraph [ref=e117]: Quantum Physics
+                  - generic [ref=e118]: 5 hours ago
+                - generic [ref=e119]:
+                  - generic [ref=e120]:
+                    - heading "Electromagnetism" [level=3] [ref=e121]:
+                      - link "Electromagnetism" [ref=e122] [cursor=pointer]:
+                        - /url: /article/electromagnetism
+                    - paragraph [ref=e123]: Physics
+                  - generic [ref=e124]: 1 day ago
+                - generic [ref=e125]:
+                  - generic [ref=e126]:
+                    - heading "String Theory" [level=3] [ref=e127]:
+                      - link "String Theory" [ref=e128] [cursor=pointer]:
+                        - /url: /article/string-theory
+                    - paragraph [ref=e129]: Theoretical Physics
+                  - generic [ref=e130]: 2 days ago
+                - generic [ref=e131]:
+                  - generic [ref=e132]:
+                    - heading "Nuclear Fusion" [level=3] [ref=e133]:
+                      - link "Nuclear Fusion" [ref=e134] [cursor=pointer]:
+                        - /url: /article/nuclear-fusion
+                    - paragraph [ref=e135]: Nuclear Physics
+                  - generic [ref=e136]: 3 days ago
+            - generic [ref=e137]:
+              - heading "Physics Domains" [level=2] [ref=e138]
+              - generic [ref=e139]:
+                - link "Classical Mechanics 45 articles" [ref=e140] [cursor=pointer]:
+                  - /url: /domain/classical-mechanics
+                  - heading "Classical Mechanics" [level=3] [ref=e142] [cursor=pointer]
+                  - paragraph [ref=e144] [cursor=pointer]: 45 articles
+                - link "Quantum Mechanics 38 articles" [ref=e145] [cursor=pointer]:
+                  - /url: /domain/quantum-mechanics
+                  - heading "Quantum Mechanics" [level=3] [ref=e147] [cursor=pointer]
+                  - paragraph [ref=e149] [cursor=pointer]: 38 articles
+                - link "Relativity 32 articles" [ref=e150] [cursor=pointer]:
+                  - /url: /domain/relativity
+                  - heading "Relativity" [level=3] [ref=e152] [cursor=pointer]
+                  - paragraph [ref=e154] [cursor=pointer]: 32 articles
+                - link "Thermodynamics 28 articles" [ref=e155] [cursor=pointer]:
+                  - /url: /domain/thermodynamics
+                  - heading "Thermodynamics" [level=3] [ref=e157] [cursor=pointer]
+                  - paragraph [ref=e159] [cursor=pointer]: 28 articles
+                - link "Electromagnetism 41 articles" [ref=e160] [cursor=pointer]:
+                  - /url: /domain/electromagnetism
+                  - heading "Electromagnetism" [level=3] [ref=e162] [cursor=pointer]
+                  - paragraph [ref=e164] [cursor=pointer]: 41 articles
+                - link "Statistical Mechanics 24 articles" [ref=e165] [cursor=pointer]:
+                  - /url: /domain/statistical-mechanics
+                  - heading "Statistical Mechanics" [level=3] [ref=e167] [cursor=pointer]
+                  - paragraph [ref=e169] [cursor=pointer]: 24 articles
+          - generic [ref=e171]:
+            - heading "Claudipedia Statistics" [level=2] [ref=e172]
+            - generic [ref=e173]:
+              - generic [ref=e174]:
+                - generic [ref=e175]: "127"
+                - generic [ref=e176]: Articles
+              - generic [ref=e177]:
+                - generic [ref=e178]: "8"
+                - generic [ref=e179]: Physics Domains
+              - generic [ref=e180]:
+                - generic [ref=e181]: 94%
+                - generic [ref=e182]: Avg Confidence
+              - generic [ref=e183]:
+                - generic [ref=e184]: "156"
+                - generic [ref=e185]: Contributors
+          - generic [ref=e187]:
+            - heading "Help Build the Future of Knowledge" [level=2] [ref=e188]
+            - paragraph [ref=e189]: Join our community of researchers, students, and AI systems working together to create the most comprehensive and reliable knowledge base.
+            - generic [ref=e190]:
+              - button "Create Article" [ref=e191]
+              - button "Join Community" [ref=e192]
+```

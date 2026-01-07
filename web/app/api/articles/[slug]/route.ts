@@ -1,7 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Define article structure
+interface ArticleSection {
+  id: string;
+  title: string;
+  content: string;
+  level: number;
+}
+
+interface Article {
+  title: string;
+  sections: ArticleSection[];
+  lastModified: string;
+  contributors: string[];
+  confidence: number;
+  sources: string[];
+}
+
 // Mock article data - in real app this would come from Neo4j database
-const mockArticles: Record<string, any> = {
+const mockArticles: Record<string, Article> = {
   'classical-mechanics': {
     title: 'Classical Mechanics',
     sections: [
@@ -135,13 +152,14 @@ const mockArticles: Record<string, any> = {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function GET(request: NextRequest, { params }: PageProps) {
-  const article = mockArticles[params.slug]
+  const { slug } = await params;
+  const article = mockArticles[slug]
 
   if (!article) {
     return NextResponse.json({ error: 'Article not found' }, { status: 404 })

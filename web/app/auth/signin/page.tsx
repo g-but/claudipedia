@@ -48,7 +48,7 @@ export default function SignIn() {
             Claudipedia
           </Link>
           <p className="text-gray-600 dark:text-gray-400">
-            Sign in to contribute to humanity's knowledge
+            Sign in to contribute to humanity&apos;s knowledge
           </p>
         </div>
 
@@ -147,7 +147,7 @@ export default function SignIn() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>By signing in, you agree to contribute to humanity's collective knowledge with transparency and integrity.</p>
+          <p>By signing in, you agree to contribute to humanity&apos;s collective knowledge with transparency and integrity.</p>
         </div>
       </div>
     </div>

@@ -247,7 +247,7 @@ export default function SignUp() {
                     className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="agreeToTerms" className="text-sm text-gray-700 dark:text-gray-300">
-                    I agree to contribute accurate, well-sourced information and help build humanity's collective knowledge with transparency and integrity.
+                    I agree to contribute accurate, well-sourced information and help build humanity&apos;s collective knowledge with transparency and integrity.
                   </label>
                 </div>
 
